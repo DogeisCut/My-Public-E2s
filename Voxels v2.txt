@@ -4,7 +4,7 @@
 @persist Seen:entity DestroySound:entity Boxes:array SelectionBox:entity GridSize GroundOffset 
 @persist Cube:entity Mats:array SelectedMat ActualMat:string OpenedAng:angle
 @persist BaseR:entity BaseG:entity BaseB:entity Preview:entity Red Blue Green SRed:entity SBlue:entity SGreen:entity ColorMenu
-@persist Alpha AdjecentWeld
+@persist Alpha AdjecentWeld ComboOpto
 @trigger 
 
 
@@ -14,11 +14,7 @@
 
 #########CONFIG############
 AdjecentWeld = 0 #enables blocks connecting to adjacent blocks
-
-
-
-
-
+ComboOpto = 0 #Enables adjacent blocks turning into bigger props, incompatible with AdjacentWeld
 
 #[
 
@@ -59,8 +55,12 @@ runOnLast(1)
 
 if (first()|duped()) {
     
+    if(AdjecentWeld && ComboOpto){
+        error("An invalid config configuration was selected")
+    }
+    
     print("Use your crowbar to build and mine!, Reload for Color Picker, Use to copy color, Sprint+Use and Sprint+Reload to change materials")
-    print("Use the chat commands .vcolor [R,G,B,A], .vmat [Material Path], and .valp [Alpha] to change the color, material, and alpha to a specific value")
+    print("Use the chat commands .vcolor [R,G,B,A], .vmat [Material Path], and .valpha [Alpha] to change the color, material, and alpha to a specific value")
     
     Alpha = 255
     
@@ -321,7 +321,7 @@ if (chatClk(owner())) {
             }
             
         }
-        if(Command == "vcol") {
+        if(Command == "vcolor") {
             hideChat(1)
             #print(Arguments:concat(" ")) #concat merges the array back into a string
             print(Arguments)
@@ -332,7 +332,7 @@ if (chatClk(owner())) {
             Blue = Arguments[3,string]:toNumber()
             Alpha = Arguments[4,string]:toNumber()
         }
-        if(Command == "valp") {
+        if(Command == "valpha") {
             hideChat(1)
             #print(Arguments:concat(" ")) #concat merges the array back into a string
             print("Alpha Set to:")
