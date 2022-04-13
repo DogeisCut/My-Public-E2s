@@ -60,6 +60,7 @@ runOnLast(1)
 if (first()|duped()) {
     
     print("Use your crowbar to build and mine!, Reload for Color Picker, Use to copy color, Sprint+Use and Sprint+Reload to change materials")
+    print("Use the chat commands .vcolor [R,G,B,A], .vmat [Material Path], and .valp [Alpha] to change the color, material, and alpha to a specific value")
     
     Alpha = 255
     
@@ -303,10 +304,11 @@ holoVisible(6,players(),0)
 runOnChat(1)
 
 if (chatClk(owner())) {  
-    if(owner():lastSaid():index(1) == "/") {  
+    if(owner():lastSaid():index(1) == ".") {  
         Arguments = owner():lastSaid():sub(2):explode(" ") #sub get all of the string after the ! and explode splits the string into an array based on spaces
         Command = Arguments:shiftString() #shift removes the first word and returns it
         if(Command == "vmat") {
+            hideChat(1)
             #print(Arguments:concat(" ")) #concat merges the array back into a string
             if (Arguments:concat(" ")=="") {
                 ActualMat = Mats[SelectedMat,string]
@@ -320,6 +322,7 @@ if (chatClk(owner())) {
             
         }
         if(Command == "vcol") {
+            hideChat(1)
             #print(Arguments:concat(" ")) #concat merges the array back into a string
             print(Arguments)
             print("Color Set to:")
@@ -330,6 +333,7 @@ if (chatClk(owner())) {
             Alpha = Arguments[4,string]:toNumber()
         }
         if(Command == "valp") {
+            hideChat(1)
             #print(Arguments:concat(" ")) #concat merges the array back into a string
             print("Alpha Set to:")
             print(Arguments:concat(" "))
