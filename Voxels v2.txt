@@ -13,7 +13,7 @@
 
 
 #########CONFIG############
-AdjecentWeld = 1 #0-1 enables blocks connecting to adjacent blocks
+AdjecentWeld = 0 #0-1 enables blocks connecting to adjacent blocks
 ComboOpto = 0 #0-1 Enables adjacent blocks turning into bigger props, incompatible with AdjacentWeld
 Range = 250 #How far away you are allowed to place blocks
 DontClearOnUndo = 1 #0-1 Will undo your last block placed instead of clearing
