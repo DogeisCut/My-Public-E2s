@@ -1,0 +1,339 @@
+@name Voxels v2
+@inputs 
+@outputs 
+@persist Seen:entity DestroySound:entity Boxes:array SelectionBox:entity GridSize GroundOffset 
+@persist Cube:entity Mats:array SelectedMat ActualMat:string OpenedAng:angle
+@persist BaseR:entity BaseG:entity BaseB:entity Preview:entity Red Blue Green SRed:entity SBlue:entity SGreen:entity ColorMenu
+@persist Alpha AdjecentWeld
+@trigger 
+
+
+
+
+
+
+#########CONFIG############
+AdjecentWeld = 0 #enables blocks connecting to adjacent blocks
+
+
+
+
+
+
+#[
+
+VOXEL BUILDER
+
+By DogeisCut ( STEAM_0:1:94985632 )
+
+if you steal this I WILL
+
+cry :(
+
+
+Creation:
+Saturday, September 4, 2021, 3:53:04 PM
+Mountain Daylight Time
+
+Last Update:
+Tuesday, April 12, 2022, 9:39 PM
+Mountain Daylight Time
+
+]#
+
+#[
+
+TODO LIST
+
+- Different block shapes, combine that with different block sizes
+- type in rbg option in color picker or something
+- (Maybe) Make the color picker and/or block ghost clientside only with holoVisible()
+- decide what to do about the emergency e2 shutdowns
+
+]#
+
+runOnTick(1)
+propSpawnUndo(0)
+enableConstraintUndo(0)
+runOnLast(1)
+
+if (first()|duped()) {
+    
+    print("Use your crowbar to build and mine!, Reload for Color Picker, Use to copy color, Sprint+Use and Sprint+Reload to change materials")
+    
+    Alpha = 255
+    
+    ActualMat = "models/debug/debugwhite"
+    SelectedMat = 1
+    
+    GridSize = 23.3
+    GroundOffset = 0
+    
+    SelectionBox = holoCreate(500)
+    holoScale(500,vec(1,1,1))
+    holoAng(500,ang())
+    holoModel(500,"models/hunter/blocks/cube05x05x05.mdl")
+    
+    DestroySound = holoCreate(999)
+    holoScale(999,vec(0,0,0))
+
+    Mats = array(
+    
+    "models/debug/debugwhite",
+    "tools/toolswhite",
+    "hunter/myplastic",
+    "phoenix_storms/wood_dome",
+    "phoenix_storms/concrete0",
+    "phoenix_storms/ps_grass",
+    "models/props_canal/metalwall005b",
+    "models/props_combine/health_charger_glass",
+    "models/player/shared/gold_player",
+    "debug/env_cubemap_model"
+    
+    )
+}
+
+holoPos(500,(round(owner():aimPos()/GridSize)*GridSize)+vec(0,0,GroundOffset))
+
+holoColor(500,vec4(255,0,0,0))
+    if (owner():weapon():model() == "models/weapons/w_crowbar.mdl") {
+        holoColor(500,vec(Red,Green,Blue),Alpha/2)
+        holoMaterial(500,ActualMat)
+    if (!ColorMenu) {
+    if (changed(owner():keyAttack2())&owner():keyAttack2()) {
+        Cube = propSpawn("models/hunter/blocks/cube05x05x05.mdl",(round(owner():aimPos()/GridSize)*GridSize)+vec(0,0,GroundOffset),ang(),1)
+        Cube:soundPlay(0,0,"physics/concrete/rock_impact_hard1.wav")
+        #weld(Cube,Boxes[Boxes:count(),entity])
+        #[
+        for(I=1,Boxes:count()){
+            weld(Cube,Boxes[I,entity])
+        }
+        ]#
+        findInSphere(Cube:pos(),30)
+        for(I=1,findToArray():count()){
+            if(AdjecentWeld>0){
+            weld(Cube,findToArray()[I,entity])
+            }
+        }
+        Cube:setMaterial(ActualMat)
+        Cube:setColor(vec(Red,Green,Blue),Alpha)
+        Boxes:pushEntity(Cube)
+    }
+    }
+    if (changed(owner():keyReload())&owner():keyReload()&!owner():keySprint()&!owner():keyWalk()) {    
+        OpenedAng = ang(0,owner():eyeAngles():yaw(),0)
+        if (ColorMenu) {
+        ColorMenu = 0
+        print("Selected Color:")
+        print(array(Red,Blue,Green,Alpha))
+        } else {
+        ColorMenu = 1
+        }
+    }
+    if (!ColorMenu) {
+    if (changed(owner():keyAttack1())&owner():keyAttack1()) {  
+        holoPos(999,owner():aimPos())
+        DestroySound:soundPlay(1,0,"physics/concrete/boulder_impact_hard1.wav")
+        owner():aimEntity():propDelete()
+    }
+    }
+    if (changed(owner():keyUse())&owner():keyUse()&!owner():keySprint()&!owner():keyWalk()) {
+        
+        Seen = owner():aimEntity()     
+        if (Seen:isValid()) {
+        Red = Seen:getColor4():x()
+        Green = Seen:getColor4():y()
+        Blue = Seen:getColor4():z()
+        Alpha = Seen:getColor4():w()
+        ActualMat = Seen:getMaterial()
+        if (ActualMat=="") {
+            ActualMat = Seen:getMaterials()[1,string]
+            print("Copied Material:")
+            print(ActualMat)
+            SelectedMat = 1
+            if (ActualMat=="") {
+                ActualMat = Mats[SelectedMat,string]
+                print("Invalid Material :(")
+            }
+        } else {
+            print("Copied Material:")
+            print(ActualMat)
+            SelectedMat = 1
+        }
+        print("Copied Color:")
+        print(array(Red,Green,Blue,Alpha))
+        }      
+    }
+    
+      if (changed(owner():keyReload())&owner():keyReload()&owner():keySprint()&!owner():keyWalk()) {     
+        SelectedMat++
+        if (SelectedMat>Mats:count()){
+        SelectedMat = Mats:count()
+        }
+        print("Selected Material:")
+        print(Mats[SelectedMat,string])
+        ActualMat = Mats[SelectedMat,string]
+    }
+    if (changed(owner():keyUse())&owner():keyUse()&owner():keySprint()) {     
+        SelectedMat--
+        if (SelectedMat<1){
+        SelectedMat = 1
+        }
+        print("Selected Material:")
+        print(Mats[SelectedMat,string])
+        ActualMat = Mats[SelectedMat,string]
+    }
+}
+
+#colorpicker
+if (first()|duped()) {
+    Red = 255
+    
+    Blue = 255
+    
+    Green = 255
+    
+    BaseR = holoCreate(0)
+    holoScale(0,vec(0,(16/3)/4,(9/3)/3))
+    holoColor(0,vec(255,0,0),255)
+    
+    BaseG = holoCreate(1)
+    holoScale(1,vec(0,(16/3)/4,(9/3)/3))
+    holoColor(1,vec(0,255,0),255)
+    
+    BaseB = holoCreate(2)
+    holoScale(2,vec(0,(16/3)/4,(9/3)/3))
+    holoColor(2,vec(0,0,255),255)
+    
+    Preview = holoCreate(3)
+    holoScale(3,vec(0.2,(16/3)/3,2.5))
+    
+    SRed = holoCreate(4)
+    holoScale(4,vec(0.4,0.05,0.8))
+    
+    SGreen = holoCreate(5)
+    holoScale(5,vec(0.4,0.05,0.8))
+    
+    SBlue = holoCreate(6)
+    holoScale(6,vec(0.4,0.05,0.8))
+    
+    holoMaterial(0,"tools/toolswhite")
+    holoMaterial(1,"tools/toolswhite")
+    holoMaterial(2,"tools/toolswhite")
+    holoMaterial(3,"tools/toolswhite")
+}
+if (ColorMenu) {
+holoVisible(0,players(),1)
+holoVisible(1,players(),1)
+holoVisible(2,players(),1)
+holoVisible(3,players(),1)
+holoVisible(4,players(),1)
+holoVisible(5,players(),1)
+holoVisible(6,players(),1)
+
+holoAng(0,OpenedAng+ang(-15,-14,0))
+holoPos(0,owner():pos()+vec(0,0,65))
+holoPos(0,BaseR:toWorld(vec(35,0,0)))
+
+holoAng(1,OpenedAng+ang(0,-14,0))
+holoPos(1,owner():pos()+vec(0,0,65))
+holoPos(1,BaseG:toWorld(vec(35,0,0)))
+
+holoAng(2,OpenedAng+ang(15,-14,0))
+holoPos(2,owner():pos()+vec(0,0,65))
+holoPos(2,BaseB:toWorld(vec(35,0,0)))
+
+holoAng(3,OpenedAng+ang(0,18,0))
+holoPos(3,owner():pos()+vec(0,0,65))
+holoPos(3,Preview:toWorld(vec(35,0,0)))
+
+holoColor(0,vec(Red,0,0),255)
+holoColor(1,vec(0,Green,0),255)
+holoColor(2,vec(0,0,Blue),255)
+holoColor(3,vec(Red,Green,Blue),255)
+
+holoAng(4,OpenedAng+ang(-15,(Red/-9.5),0))
+holoPos(4,owner():pos()+vec(0,0,65))
+holoPos(4,SRed:toWorld(vec(35,0,0)))
+
+holoAng(5,OpenedAng+ang(0,(Green/-9.5),0))
+holoPos(5,owner():pos()+vec(0,0,65))
+holoPos(5,SGreen:toWorld(vec(35,0,0)))
+
+holoAng(6,OpenedAng+ang(15,(Blue/-9.5),0))
+holoPos(6,owner():pos()+vec(0,0,65))
+holoPos(6,SBlue:toWorld(vec(35,0,0)))
+
+
+if (owner():keyAttack2()&owner():eyeAngles():pitch()>7.5&owner():eyeAngles():pitch()<22.5){   
+    #MBlue += 0.6
+    #Blue = round(abs(cos(MBlue)*255))
+    Blue = ((OpenedAng:yaw()-owner():eyeAngles():yaw()))*10
+    Blue = round(Blue/8)*8
+    Blue = round(clamp(Blue,0,255))
+    #print("Blue: "+Blue)
+}
+if (owner():keyAttack2()&owner():eyeAngles():pitch()>-7.5&owner():eyeAngles():pitch()<7.5){
+    #MGreen += 0.6
+    #Green = round(abs(cos(MGreen)*255))
+    Green = ((OpenedAng:yaw()-owner():eyeAngles():yaw()))*10
+    Green = round(Green/8)*8
+    Green = round(clamp(Green,0,255))
+    #print("Green: "+Green)
+}
+if (owner():keyAttack2()&owner():eyeAngles():pitch()<-7.5&owner():eyeAngles():pitch()>-22.5){ 
+    #MRed += 0.6
+    #Red = round(abs(cos(MRed)*255))
+    Red = ((OpenedAng:yaw()-owner():eyeAngles():yaw()))*10
+    Red = round(Red/8)*8
+    Red = round(clamp(Red,0,255))
+    #print("Red: "+Red)
+}
+
+} else {
+holoVisible(0,players(),0)
+holoVisible(1,players(),0)
+holoVisible(2,players(),0)
+holoVisible(3,players(),0)
+holoVisible(4,players(),0)
+holoVisible(5,players(),0)
+holoVisible(6,players(),0)
+}
+
+runOnChat(1)
+
+if (chatClk(owner())) {  
+    if(owner():lastSaid():index(1) == "/") {  
+        Arguments = owner():lastSaid():sub(2):explode(" ") #sub get all of the string after the ! and explode splits the string into an array based on spaces
+        Command = Arguments:shiftString() #shift removes the first word and returns it
+        if(Command == "vmat") {
+            #print(Arguments:concat(" ")) #concat merges the array back into a string
+            if (Arguments:concat(" ")=="") {
+                ActualMat = Mats[SelectedMat,string]
+                print("Invalid Material :(")
+            } else {
+                print("Material Set to:")
+                ActualMat = Arguments:concat(" ")
+                print(Arguments:concat(" "))
+                SelectedMat = 1
+            }
+            
+        }
+        if(Command == "vcol") {
+            #print(Arguments:concat(" ")) #concat merges the array back into a string
+            print(Arguments)
+            print("Color Set to:")
+            Red=8564475867
+            Red = Arguments[1,string]:toNumber()
+            Green = Arguments[2,string]:toNumber()
+            Blue = Arguments[3,string]:toNumber()
+            Alpha = Arguments[4,string]:toNumber()
+        }
+        if(Command == "valp") {
+            #print(Arguments:concat(" ")) #concat merges the array back into a string
+            print("Alpha Set to:")
+            print(Arguments:concat(" "))
+            Alpha = Arguments:concat(" "):toNumber()
+        }
+    }  
+}
