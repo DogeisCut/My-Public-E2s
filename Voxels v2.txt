@@ -90,13 +90,26 @@ if (first()|duped()) {
     "models/debug/debugwhite",
     "tools/toolswhite",
     "hunter/myplastic",
+    "sprops/sprops_grid",
     "phoenix_storms/wood_dome",
+    "phoenix_storms/wood",
+    "models/props_wasteland/wood_fence01a",
     "phoenix_storms/concrete0",
     "phoenix_storms/ps_grass",
     "models/props_canal/metalwall005b",
+    "models/props_debris/metalwall001a",
+    "metal2",
+    "models/props_wasteland/concretewall066a",
+    "models/props_wasteland/concretewall064b",
+    "phoenix_storms/indenttiles2",
+    "phoenix_storms/tiles2",
+    "xeon133/slider_12x12x12",
     "models/props_combine/health_charger_glass",
+    "rubber",
     "models/player/shared/gold_player",
-    "debug/env_cubemap_model"
+    "debug/env_cubemap_model",
+    "engine/framesync",
+    "models/props_junk/phys_objects01a"
     
     )
 }
