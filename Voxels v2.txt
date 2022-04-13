@@ -105,6 +105,7 @@ if (first()|duped()) {
     "phoenix_storms/tiles2",
     "xeon133/slider_12x12x12",
     "models/props_combine/health_charger_glass",
+    "models/props_junk/cardboard_boxes001a",
     "rubber",
     "models/player/shared/gold_player",
     "debug/env_cubemap_model",
