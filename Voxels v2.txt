@@ -4,7 +4,7 @@
 @persist Seen:entity DestroySound:entity Boxes:array SelectionBox:entity GridSize GroundOffset 
 @persist Cube:entity Mats:array SelectedMat ActualMat:string OpenedAng:angle
 @persist BaseR:entity BaseG:entity BaseB:entity Preview:entity Red Blue Green SRed:entity SBlue:entity SGreen:entity ColorMenu
-@persist Alpha AdjecentWeld ComboOpto
+@persist Alpha AdjecentWeld ComboOpto Range DontClearOnUndo
 @trigger 
 
 
@@ -13,8 +13,15 @@
 
 
 #########CONFIG############
-AdjecentWeld = 0 #enables blocks connecting to adjacent blocks
-ComboOpto = 0 #Enables adjacent blocks turning into bigger props, incompatible with AdjacentWeld
+AdjecentWeld = 0 #0-1 enables blocks connecting to adjacent blocks
+ComboOpto = 0 #0-1 Enables adjacent blocks turning into bigger props, incompatible with AdjacentWeld
+Range = 250 #How far away you are allowed to place blocks
+DontClearOnUndo = 1 #0-1 Will undo your last block placed instead of clearing, incompatible with AdjacentWeld and ComboOpto
+
+
+
+
+
 
 #[
 
@@ -49,13 +56,19 @@ TODO LIST
 ]#
 
 runOnTick(1)
-propSpawnUndo(0)
 enableConstraintUndo(0)
 runOnLast(1)
+propSpawnUndo(DontClearOnUndo)
 
 if (first()|duped()) {
     
     if(AdjecentWeld && ComboOpto){
+        error("An invalid config configuration was selected")
+    }
+    if(AdjecentWeld && DontClearOnUndo){
+        error("An invalid config configuration was selected")
+    }
+    if(DontClearOnUndo && ComboOpto){
         error("An invalid config configuration was selected")
     }
     
