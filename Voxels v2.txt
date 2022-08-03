@@ -2,9 +2,9 @@
 @inputs 
 @outputs 
 @persist Seen:entity DestroySound:entity Boxes:array SelectionBox:entity GridSize GroundOffset 
-@persist Cube:entity Mats:array SelectedMat ActualMat:string OpenedAng:angle
+@persist Cube:entity Mats:array SelectedMat ActualMat:string OpenedAng:angle Model:string
 @persist BaseR:entity BaseG:entity BaseB:entity Preview:entity Red Blue Green SRed:entity SBlue:entity SGreen:entity ColorMenu
-@persist Alpha AdjecentWeld ComboOpto Range DontClearOnUndo
+@persist Alpha AdjecentWeld ComboOpto Range DontClearOnUndo Scale 
 @trigger 
 
 
@@ -17,6 +17,9 @@ AdjecentWeld = 0 #0-1 enables blocks connecting to adjacent blocks
 ComboOpto = 0 #0-1 Enables adjacent blocks turning into bigger props, incompatible with AdjacentWeld
 Range = 250 #How far away you are allowed to place blocks
 DontClearOnUndo = 1 #0-1 Will undo your last block placed instead of clearing
+Scale = 0.5 #supported values are the ones of the phx plastic blocks, so 0.5, 1, 2, 4, 8, 12, 16 (Bugs out at about 12)
+GroundOffset = 0
+#########CONFIG############
 
 
 
@@ -39,7 +42,7 @@ Saturday, September 4, 2021, 3:53:04 PM
 Mountain Daylight Time
 
 Last Update:
-Tuesday, April 12, 2022, 9:39 PM
+Tuesday, August 2, 2022, 6:23 PM
 Mountain Daylight Time
 
 ]#
@@ -74,13 +77,36 @@ if (first()|duped()) {
     ActualMat = "models/debug/debugwhite"
     SelectedMat = 1
     
-    GridSize = 23.3
-    GroundOffset = 0
+    GridSize = 23.2*Scale
+    
+    switch(Scale) {
+        case 0.5,
+        Model = "models/hunter/blocks/cube025x025x025.mdl"
+        break
+        case 1,
+        Model = "models/hunter/blocks/cube05x05x05.mdl"
+        break
+        case 2,
+        Model = "models/hunter/blocks/cube1x1x1.mdl"
+        break
+        case 4,
+        Model = "models/hunter/blocks/cube2x2x2.mdl"
+        break
+        case 8,
+        Model = "models/hunter/blocks/cube4x4x4.mdl"
+        break
+        case 12,
+        Model = "models/hunter/blocks/cube6x6x6.mdl"
+        break
+        case 16,
+        Model = "models/hunter/blocks/cube8x8x8.mdl"
+        break
+    }
     
     SelectionBox = holoCreate(500)
     holoScale(500,vec(1,1,1))
     holoAng(500,ang())
-    holoModel(500,"models/hunter/blocks/cube05x05x05.mdl")
+    holoModel(500,Model)
     
     DestroySound = holoCreate(999)
     holoScale(999,vec(0,0,0))
@@ -88,7 +114,7 @@ if (first()|duped()) {
     Mats = array(
     
     "models/debug/debugwhite",
-    "tools/toolswhite",
+    "lights/white",
     "hunter/myplastic",
     "sprops/sprops_grid",
     "phoenix_storms/Metalfloor_2-3",
@@ -118,7 +144,10 @@ if (first()|duped()) {
     "models/player/shared/gold_player",
     "debug/env_cubemap_model",
     "engine/framesync",
-    "models/props_junk/phys_objects01a"
+    "models/props_junk/phys_objects01a",
+    "models/error/new light1",
+    "models/error/green"
+
     
     )
 }
@@ -131,7 +160,7 @@ holoColor(500,vec4(255,0,0,0))
         holoMaterial(500,ActualMat)
     if (!ColorMenu) {
     if (changed(owner():keyAttack2())&owner():keyAttack2()) {
-        Cube = propSpawn("models/hunter/blocks/cube05x05x05.mdl",(round(owner():aimPos()/GridSize)*GridSize)+vec(0,0,GroundOffset),ang(),1)
+        Cube = propSpawn(Model,(round(owner():aimPos()/GridSize)*GridSize)+vec(0,0,GroundOffset),ang(),1)
         Cube:soundPlay(0,0,"physics/concrete/rock_impact_hard1.wav")
         #weld(Cube,Boxes[Boxes:count(),entity])
         #[
@@ -262,19 +291,19 @@ holoVisible(5,players(),1)
 holoVisible(6,players(),1)
 
 holoAng(0,OpenedAng+ang(-15,-14,0))
-holoPos(0,owner():pos()+vec(0,0,65))
+holoPos(0,owner():shootPos())
 holoPos(0,BaseR:toWorld(vec(35,0,0)))
 
 holoAng(1,OpenedAng+ang(0,-14,0))
-holoPos(1,owner():pos()+vec(0,0,65))
+holoPos(1,owner():shootPos())
 holoPos(1,BaseG:toWorld(vec(35,0,0)))
 
 holoAng(2,OpenedAng+ang(15,-14,0))
-holoPos(2,owner():pos()+vec(0,0,65))
+holoPos(2,owner():shootPos())
 holoPos(2,BaseB:toWorld(vec(35,0,0)))
 
 holoAng(3,OpenedAng+ang(0,18,0))
-holoPos(3,owner():pos()+vec(0,0,65))
+holoPos(3,owner():shootPos())
 holoPos(3,Preview:toWorld(vec(35,0,0)))
 
 holoColor(0,vec(Red,0,0),255)
@@ -283,15 +312,15 @@ holoColor(2,vec(0,0,Blue),255)
 holoColor(3,vec(Red,Green,Blue),255)
 
 holoAng(4,OpenedAng+ang(-15,(Red/-9.5),0))
-holoPos(4,owner():pos()+vec(0,0,65))
+holoPos(4,owner():shootPos())
 holoPos(4,SRed:toWorld(vec(35,0,0)))
 
 holoAng(5,OpenedAng+ang(0,(Green/-9.5),0))
-holoPos(5,owner():pos()+vec(0,0,65))
+holoPos(5,owner():shootPos())
 holoPos(5,SGreen:toWorld(vec(35,0,0)))
 
 holoAng(6,OpenedAng+ang(15,(Blue/-9.5),0))
-holoPos(6,owner():pos()+vec(0,0,65))
+holoPos(6,owner():shootPos())
 holoPos(6,SBlue:toWorld(vec(35,0,0)))
 
 
