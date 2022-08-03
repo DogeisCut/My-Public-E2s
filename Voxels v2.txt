@@ -17,7 +17,7 @@ AdjecentWeld = 0 #0-1 enables blocks connecting to adjacent blocks
 ComboOpto = 0 #0-1 Enables adjacent blocks turning into bigger props, incompatible with AdjacentWeld
 Range = 250 #How far away you are allowed to place blocks
 DontClearOnUndo = 1 #0-1 Will undo your last block placed instead of clearing
-Scale = 0.5 #supported values are the ones of the phx plastic blocks, so 0.5, 1, 2, 4, 8, 12, 16 (Bugs out at about 12)
+Scale = 1 #supported values are the ones of the phx plastic blocks, so 0.5, 1, 2, 4, 8, 12, 16 (Bugs out at about 12)
 GroundOffset = 0
 #########CONFIG############
 
